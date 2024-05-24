@@ -29,9 +29,25 @@ import SwiftUI
         _ type: LogType = .none,
         _ style: LogStyle = .none
     ) {
-        self.logs.append(
-            .init(type: type, style: style, value: type.prefix + log)
-        )
+        let logs = log.components(separatedBy: "\n")
+        logs.forEach { log in
+            self.logs.append(
+                .init(type: type, style: style, value: type.prefix + log)
+            )
+        }
+    }
+
+    func add(
+        _ result: Result<String, Error>,
+        _ type: LogType = .none,
+        _ style: LogStyle = .none
+    ) {
+        switch result {
+        case .success(let success):
+            return self.add(success, type, style)
+        case .failure(let failure):
+            return self.add(failure.localizedDescription, .error, style)
+        }
     }
 
     func clear() {

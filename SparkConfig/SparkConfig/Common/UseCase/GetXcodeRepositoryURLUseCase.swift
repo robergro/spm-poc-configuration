@@ -1,5 +1,5 @@
 //
-//  RepositoryXcodeURLUseCase.swift
+//  GetXcodeRepositoryURLUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 16/05/2024.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-final class RepositoryXcodeURLUseCase {
+final class GetXcodeRepositoryURLUseCase {
 
     // MARK: - Getter
 
-    func getXcodeURL(from repositoryURL: URL) -> URL? {
+    func execute(from repositoryURL: URL) -> URL? {
         let packagePath = repositoryURL.path + "/Package.swift"
         
         if FileManager.default.fileExists(atPath: packagePath) {

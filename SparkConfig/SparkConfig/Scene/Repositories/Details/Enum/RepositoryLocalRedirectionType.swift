@@ -1,13 +1,14 @@
 //
-//  RepositoryRedirectionType.swift
+//  RepositoryLocalRedirectionType.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 16/05/2024.
 //
 
-enum RepositoryRedirectionType: String, CaseIterable {
+enum RepositoryLocalRedirectionType: String, CaseIterable {
     case xcode
     case finder
+    case github
 
     // MARK: - Properties
 
@@ -15,6 +16,7 @@ enum RepositoryRedirectionType: String, CaseIterable {
         switch self {
         case .xcode: "Open package in Xcode"
         case .finder: "Open in Finder"
+        case .github: "Open in github"
         }
     }
 
@@ -22,6 +24,7 @@ enum RepositoryRedirectionType: String, CaseIterable {
         switch self {
         case .xcode: "arrow.up.forward.app"
         case .finder: "folder"
+        default: ""
         }
     }
 }

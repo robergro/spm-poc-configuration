@@ -9,17 +9,17 @@ final class AppViewModel {
     
     // MARK: - Properties
 
-    private let githubTokenUseCase: GithubTokenUseCase
+    private let gitTokenUseCase: GitTokenUseCase
 
     // MARK: - Initialization
 
-    init(githubTokenUseCase: GithubTokenUseCase = .init()) {
-        self.githubTokenUseCase = githubTokenUseCase
+    init(gitTokenUseCase: GitTokenUseCase = .init()) {
+        self.gitTokenUseCase = gitTokenUseCase
     }
 
     // MARK: - Methods
 
     func loadEnv() {
-        self.githubTokenUseCase.setEnv()
+        self.gitTokenUseCase.setEnv()
     }
 }

@@ -1,5 +1,5 @@
 //
-//  RepositoriesLocationUseCase.swift
+//  LocalRepositoriesLocationUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 15/05/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class RepositoriesLocationUseCase: DirectoryLocationUseCaseProtocol {
+final class LocalRepositoriesLocationUseCase: DirectoryLocationUseCaseProtocol {
 
     // MARK: - Constants
 

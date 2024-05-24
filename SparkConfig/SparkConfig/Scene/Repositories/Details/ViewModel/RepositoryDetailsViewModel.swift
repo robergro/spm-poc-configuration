@@ -11,45 +11,72 @@ import SwiftUI
 
     // MARK: - Properties
 
+    @ObservationIgnored private let githubURL: URL?
     @ObservationIgnored private let xcodeURL: URL?
-    @ObservationIgnored private let runSourceryUseCase: RepositoryRunSourceryUseCase
+    @ObservationIgnored private let runSourceryUseCase: RunSourceryUseCase
     @ObservationIgnored private let initComponentUseCase: InitComponentUseCase
 
     // MARK: - Published Properties
 
     let repository: Repository
     let displayName: String
-    let redirectionTypes: [RepositoryRedirectionType]
+    let showGithubSection: Bool
+    let localRedirectionTypes: [RepositoryLocalRedirectionType]
     let executionTypes: [RepositoryExecutionType]
 
     // MARK: - Initialization
     
     init(
         repository: Repository,
-        displayNameUseCase: RepositoryDisplayNameUseCase = .init(),
-        repositoryXcodeURLUseCase: RepositoryXcodeURLUseCase = .init(),
-        runSourceryUseCase: RepositoryRunSourceryUseCase = .init(),
-        initComponentUseCase: InitComponentUseCase = .init()
+        displayNameUseCase: GetRepositoryDisplayNameUseCase = .init(),
+        getXcodeRepositoryURLUseCase: GetXcodeRepositoryURLUseCase = .init(),
+        runSourceryUseCase: RunSourceryUseCase = .init(),
+        initComponentUseCase: InitComponentUseCase = .init(),
+        getGitRepositoryURLUseCase: GetGitRepositoryURLUseCase = .init(),
+        getRepositoryDependenciesUseCase: GetRepositoryDependenciesUseCase = .init()
     ) {
+        print("------")
+        print("LOGROB Repo \(repository.name)")
         self.repository = repository
 
         self.runSourceryUseCase = runSourceryUseCase
         self.initComponentUseCase = initComponentUseCase
 
-        self.displayName = displayNameUseCase.getName(from: repository.name)
-        self.xcodeURL = repositoryXcodeURLUseCase.getXcodeURL(from: repository.url)
-        self.redirectionTypes = self.xcodeURL != nil ? RepositoryRedirectionType.allCases : [.finder]
+        getRepositoryDependenciesUseCase.execute(from: repository.url)
+
+        self.displayName = displayNameUseCase.execute(from: repository.name)
+        self.githubURL = getGitRepositoryURLUseCase.execute(from: repository.url)
+        self.showGithubSection = self.githubURL != nil
+        self.xcodeURL = getXcodeRepositoryURLUseCase.execute(from: repository.url)
+        self.localRedirectionTypes = self.xcodeURL != nil ? RepositoryLocalRedirectionType.allCases : [.finder]
         self.executionTypes = repository.type == .component ? RepositoryExecutionType.allCases : [.runSourcery]
     }
 
     // MARK: - Redirection
 
-    func redirect(from type: RepositoryRedirectionType) {
+    func redirect(from type: RepositoryExternalRedirectionType) {
+        guard let githubURL = self.githubURL else {
+            return
+        }
+
+        print("LOGROB github URL -\(githubURL.path)-")
+
+        switch type {
+        case .github:
+            NSWorkspace.shared.open(githubURL)
+        case .githubPullRequests:
+            NSWorkspace.shared.open(githubURL.appending(path: "pulls"))
+        }
+    }
+
+    func redirect(from type: RepositoryLocalRedirectionType) {
         switch type {
         case .xcode:
             guard let xcodeURL = self.xcodeURL else { return }
             NSWorkspace.shared.open(xcodeURL)
         case .finder:
+            NSWorkspace.shared.open(self.repository.url)
+        case .github:
             NSWorkspace.shared.open(self.repository.url)
         }
     }

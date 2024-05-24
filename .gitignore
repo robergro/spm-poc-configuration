@@ -5,5 +5,5 @@ xcuserdata/
 DerivedData/
 .netrc
 .swiftpm/
-Sources/Testing/Generated/
+*Generated/
 Package.resolved

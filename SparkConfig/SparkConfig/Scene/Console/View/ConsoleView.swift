@@ -11,7 +11,7 @@ struct ConsoleView: View {
 
     // MARK: - Properties
 
-    @State private var isConsoleVisible = true
+    @Bindable private var viewModel = ConsoleViewModel()
 
     // MARK: - View
     
@@ -22,7 +22,7 @@ struct ConsoleView: View {
                     Spacer()
 
                     Button {
-                        self.isConsoleVisible.toggle()
+                        self.viewModel.isConsoleVisible.toggle()
                     } label: {
                         Image(systemName: "rectangle.bottomthird.inset.filled")
                             .frame(width: 16, height: 16)
@@ -35,26 +35,37 @@ struct ConsoleView: View {
                 Divider()
                     .background(Color.black)
 
-                if self.isConsoleVisible {
+                if self.viewModel.isConsoleVisible {
                     ScrollView {
-                        ForEach(
-                            Console.shared.logs,
-                            id: \.identifier
-                        ) { log in
-                            Text(log.value)
-                                .foregroundStyle(log.type.color)
-                                .bold(log.style.bold)
-                                .textSelection(.enabled)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                        ScrollViewReader { reader in
+                            LazyVStack {
+                                ForEach(
+                                    self.viewModel.searchResults,
+                                    id: \.identifier
+                                ) { log in
+                                    Text(log.value)
+                                        .foregroundStyle(log.type.color)
+                                        .bold(log.style.bold)
+                                        .textSelection(.enabled)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                            .onChange(of: Console.shared.logs.count, initial: false) { _, newValue in
+                                withAnimation {
+                                    reader.scrollTo(newValue - 1, anchor: .bottom)
+                                }
+                            }
                         }
                     }
+                    .defaultScrollAnchor(.bottom)
                     .padding(4)
-
-                    Divider()
-                        .background(Color.black)
 
                     HStack {
                         Spacer()
+
+                        TextField("Filter", text: self.$viewModel.searchText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(maxWidth: 200)
 
                         Button {
                             Console.shared.clear()
@@ -66,6 +77,7 @@ struct ConsoleView: View {
                         .padding(4)
                         .padding(.trailing, 8)
                     }
+                    .padding(.bottom, 4)
                 }
             }
         }

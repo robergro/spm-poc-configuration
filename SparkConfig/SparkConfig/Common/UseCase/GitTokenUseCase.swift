@@ -1,5 +1,5 @@
 //
-//  GithubTokenUseCase.swift
+//  GitTokenUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 17/05/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class GithubTokenUseCase {
+final class GitTokenUseCase {
 
     // MARK: - Constants
 

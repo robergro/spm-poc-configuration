@@ -30,24 +30,26 @@ struct RepositoryDetailsView: View {
 
                 Divider()
 
-                // TODO: Add GH (repo, PR)  details information
+                // Github
+                if self.viewModel.showGithubSection {
+                    self.githubView
+
+                    Divider()
+                }
 
                 // Settings
                 self.settingsView
 
                 Divider()
 
+                // Dependencies
+                self.dependenciesView
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 24)
 
             Spacer()
         }
-
-        // TODO: repo details
-        // sourcery button
-        // Init project (launch the script from the configuration folder), only for the component module (isAutoConfigurable on RepositoryType)
-        // Console line
     }
 
     // MARK: - ViewBuilder
@@ -62,7 +64,7 @@ struct RepositoryDetailsView: View {
             // Redirection buttons
             HStack {
                 ForEach(
-                    self.viewModel.redirectionTypes,
+                    self.viewModel.localRedirectionTypes,
                     id: \.rawValue
                 ) { type in
 
@@ -77,6 +79,32 @@ struct RepositoryDetailsView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var githubView: some View {
+        VStack(
+            alignment: .leading,
+            spacing: 16
+        ) {
+            Text("Github")
+                .font(.title2)
+                .bold()
+
+            // Redirection Buttons
+            HStack {
+                ForEach(
+                    RepositoryExternalRedirectionType.allCases,
+                    id: \.rawValue
+                ) { type in
+
+                    Button(type.name) {
+                        self.viewModel.redirect(from: type)
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 12)
     }
 
     @ViewBuilder
@@ -100,6 +128,32 @@ struct RepositoryDetailsView: View {
                     }
                 }
             }
+        }
+        .padding(.vertical, 12)
+    }
+
+    @ViewBuilder
+    private var dependenciesView: some View {
+        VStack(
+            alignment: .leading,
+            spacing: 16
+        ) {
+            Text("Dependencies")
+                .font(.title2)
+                .bold()
+
+            // TODO:
+//            // Executions Buttons
+//            HStack {
+//                ForEach(
+//                    self.viewModel.executionTypes,
+//                    id: \.rawValue
+//                ) { type in
+//                    Button(type.name) {
+//                        self.viewModel.execute(from: type)
+//                    }
+//                }
+//            }
         }
         .padding(.vertical, 12)
     }

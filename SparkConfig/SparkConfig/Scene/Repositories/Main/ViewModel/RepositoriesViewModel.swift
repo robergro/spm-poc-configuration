@@ -11,7 +11,7 @@ import SwiftUI
 
     // MARK: - Properties
 
-    @ObservationIgnored private let repositoriesUseCase: RepositoriesUseCase
+    @ObservationIgnored private let getLocalRepositoriesUseCase: GetLocalRepositoriesUseCase
 
     @ObservationIgnored var searchResults: [Repository] {
         if self.searchText.isEmpty {
@@ -31,16 +31,16 @@ import SwiftUI
     // MARK: - Initialization
 
     init(
-        repositoriesUseCase: RepositoriesUseCase = .init()
+        getLocalRepositoriesUseCase: GetLocalRepositoriesUseCase = .init()
     ) {
-        self.repositoriesUseCase = repositoriesUseCase
+        self.getLocalRepositoriesUseCase = getLocalRepositoriesUseCase
 
-        self.repositories = repositoriesUseCase.getRepositories()
+        self.repositories = getLocalRepositoriesUseCase.execute()
     }
 
     // MARK: - Setter
 
     func refresh() {
-        self.repositories = repositoriesUseCase.getRepositories()
+        self.repositories = getLocalRepositoriesUseCase.execute()
     }
 }

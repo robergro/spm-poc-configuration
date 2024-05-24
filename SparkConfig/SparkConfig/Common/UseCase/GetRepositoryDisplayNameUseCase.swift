@@ -1,5 +1,5 @@
 //
-//  RepositoryDisplayNameUseCase.swift
+//  GetRepositoryDisplayNameUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 16/05/2024.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-final class RepositoryDisplayNameUseCase {
+final class GetRepositoryDisplayNameUseCase {
 
     // MARK: - Getter
 
-    func getName(from repositoryName: String) -> String {
+    func execute(from repositoryName: String) -> String {
         // TODO: uncomment ASAP
 //        if repository.name == "spark-ios" {
         // TODO: remove ASAP

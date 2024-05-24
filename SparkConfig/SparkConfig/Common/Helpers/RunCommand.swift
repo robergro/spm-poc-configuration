@@ -7,6 +7,12 @@
 
 import Foundation
 
+// TODO: add kind of async management here
+
+enum RunCommandError: Error {
+    case unknow
+}
+
 final class RunCommand {
 
     // MARK: - Properties
@@ -22,7 +28,7 @@ final class RunCommand {
 
     // MARK: - Methods
 
-    func shellScript(_ command: String) -> String {
+    func shellScript(_ command: String) -> Result<String, Error> {
         let pipe = Pipe()
 
         var processInfoEnv = ProcessInfo.processInfo.environment
@@ -38,10 +44,23 @@ final class RunCommand {
         process.launchPath = "/bin/zsh"
         process.launch()
 
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)!
+        do {
+            var response: String?
+            if let data = try pipe.fileHandleForReading.readToEnd(),
+               let output = String(data: data, encoding: .utf8) {
+                response = output
+            }
 
-        return output
+
+            if let response {
+                return .success(response)
+            }
+
+        } catch {
+            return .failure(error)
+        }
+
+        return .failure(RunCommandError.unknow)
     }
 
     func setEnv(key: String, value: String) {

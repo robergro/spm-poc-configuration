@@ -11,9 +11,9 @@ import SwiftUI
 
     // MARK: - Properties
 
-    @ObservationIgnored private let repositoriesLocationUseCase: RepositoriesLocationUseCase
+    @ObservationIgnored private let localRepositoriesLocationUseCase: LocalRepositoriesLocationUseCase
     @ObservationIgnored private let derivedDataLocationUseCase: DerivedDataLocationUseCase
-    @ObservationIgnored private let githubTokenUseCase: GithubTokenUseCase
+    @ObservationIgnored private let gitTokenUseCase: GitTokenUseCase
     @ObservationIgnored let githubDocURL: URL?
 
     // MARK: - Published Properties
@@ -25,25 +25,25 @@ import SwiftUI
     // MARK: - Initialization
 
     init(
-        repositoriesLocationUseCase: RepositoriesLocationUseCase = .init(),
+        localRepositoriesLocationUseCase: LocalRepositoriesLocationUseCase = .init(),
         derivedDataLocationUseCase: DerivedDataLocationUseCase = .init(),
-        githubTokenUseCase: GithubTokenUseCase = .init()
+        gitTokenUseCase: GitTokenUseCase = .init()
     ) {
-        self.repositoriesLocationUseCase = repositoriesLocationUseCase
+        self.localRepositoriesLocationUseCase = localRepositoriesLocationUseCase
         self.derivedDataLocationUseCase = derivedDataLocationUseCase
-        self.githubTokenUseCase = githubTokenUseCase
+        self.gitTokenUseCase = gitTokenUseCase
 
-        self.repositoriesLocationURL = repositoriesLocationUseCase.getURL()
+        self.repositoriesLocationURL = localRepositoriesLocationUseCase.getURL()
         self.derivedDataLocationURL = derivedDataLocationUseCase.getURL()
 
-        self.githubToken = githubTokenUseCase.getToken()
+        self.githubToken = gitTokenUseCase.getToken()
         self.githubDocURL = URL(string: "https://cli.github.com/manual/gh_help_environment")
     }
 
     // MARK: - Setter
 
     func setRepositoriesLocationURL(_ url: URL) {
-        self.repositoriesLocationUseCase.update(url: url)
+        self.localRepositoriesLocationUseCase.update(url: url)
         self.repositoriesLocationURL = url
     }
 
@@ -55,14 +55,12 @@ import SwiftUI
     // MARK: - Action
 
     func close() {
-        self.githubTokenUseCase.update(token: self.githubToken)
-
-        Console.shared.add("Hello azdpo  aopzijaz ido ")
+        self.gitTokenUseCase.update(token: self.githubToken)
     }
 
     func reset() {
-        self.repositoriesLocationUseCase.reset()
-        self.repositoriesLocationURL = self.repositoriesLocationUseCase.getURL()
+        self.localRepositoriesLocationUseCase.reset()
+        self.repositoriesLocationURL = self.localRepositoriesLocationUseCase.getURL()
 
         self.derivedDataLocationUseCase.reset()
         self.derivedDataLocationURL = self.derivedDataLocationUseCase.getURL()

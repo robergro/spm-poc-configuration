@@ -1,5 +1,5 @@
 //
-//  RepositoryUseCase.swift
+//  GetLocalRepositoryUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 16/05/2024.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-final class RepositoryUseCase {
+final class GetLocalRepositoryUseCase {
 
     // MARK: - Getter
 
-    func getRepository(from url: URL) -> Repository? {
+    func execute(from url: URL) -> Repository? {
         do {
             let files = try FileManager.default.contentsOfDirectory(
                 at: url, 

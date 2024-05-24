@@ -11,7 +11,7 @@ import SwiftUI
 
     // MARK: - Properties
 
-    @ObservationIgnored private let componentRepositoryNameUseCase: ComponentRepositoryNameUseCase
+    @ObservationIgnored private let getGitComponentRepositoryNameUseCase: GetGitComponentRepositoryNameUseCase
     @ObservationIgnored private let createComponentUseCase: CreateComponentUseCase
     @ObservationIgnored private let cloneComponentUseCase: CloneComponentUseCase
     @ObservationIgnored private let initComponentUseCase: InitComponentUseCase
@@ -22,18 +22,18 @@ import SwiftUI
 
     var componentName: String = ""
     var repositoryName: String {
-        self.componentRepositoryNameUseCase.execute(from: self.componentName)
+        self.getGitComponentRepositoryNameUseCase.execute(from: self.componentName)
     }
 
     // MARK: - Initialization
 
     init(
-        componentRepositoryNameUseCase: ComponentRepositoryNameUseCase = .init(),
+        getGitComponentRepositoryNameUseCase: GetGitComponentRepositoryNameUseCase = .init(),
         createComponentUseCase: CreateComponentUseCase = .init(),
         cloneComponentUseCase: CloneComponentUseCase = .init(),
         initComponentUseCase: InitComponentUseCase = .init()
     ) {
-        self.componentRepositoryNameUseCase = componentRepositoryNameUseCase
+        self.getGitComponentRepositoryNameUseCase = getGitComponentRepositoryNameUseCase
         self.createComponentUseCase = createComponentUseCase
         self.cloneComponentUseCase = cloneComponentUseCase
         self.initComponentUseCase = initComponentUseCase
@@ -50,10 +50,10 @@ import SwiftUI
 
         let repositoryName = self.repositoryName
         self.createComponentUseCase.execute(from: repositoryName)
+        sleep(5) // Need to wait before clone the project
         self.cloneComponentUseCase.execute(from: repositoryName)
         self.initComponentUseCase.execute(
-            from: repositoryName,
-            componentName: self.componentName
+            from: repositoryName
         )
     }
 }

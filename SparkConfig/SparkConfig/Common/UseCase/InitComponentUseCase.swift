@@ -16,57 +16,64 @@ final class InitComponentUseCase {
     enum Constants {
         enum Default {
             // TODO: adding ___ before and after the word
-            static let defaultName = "YOUR_COMPONENT"
-            static let defaultUsername = "YOUR_NAME"
-            static let defaultDate = "CURRENT_DATE"
-            static let defaultYear = "CURRENT_YEAR"
+            static let defaultName = "___COMPONENT_NAME___"
+            static let defaultNameLowerCase = "___component_name___"
+            static let defaultUsername = "___USERNAME___"
+            static let defaultDate = "___CURRENT_DATE___"
+            static let defaultYear = "___CURRENT_YEAR___"
+        }
+
+        enum Ignore {
+            static let paths = [
+                ".git",
+                ".sourcery",
+                ".github",
+                ".gitignore",
+                ".swiftlint.yml",
+                ".DS_Store"
+            ]
         }
     }
 
     // MARK: - Properties
 
-    private let repositoriesLocationUseCase: RepositoriesLocationUseCase
-    private let repositoryDisplayNameUseCase: RepositoryDisplayNameUseCase
+    private let localRepositoriesLocationUseCase: LocalRepositoriesLocationUseCase
+    private let getRepositoryDisplayNameUseCase: GetRepositoryDisplayNameUseCase
 
     // MARK: - Initialization
 
     init(
-        repositoriesLocationUseCase: RepositoriesLocationUseCase = .init(),
-        repositoryDisplayNameUseCase: RepositoryDisplayNameUseCase = .init()
+        localRepositoriesLocationUseCase: LocalRepositoriesLocationUseCase = .init(),
+        getRepositoryDisplayNameUseCase: GetRepositoryDisplayNameUseCase = .init()
     ) {
-        self.repositoriesLocationUseCase = repositoriesLocationUseCase
-        self.repositoryDisplayNameUseCase = repositoryDisplayNameUseCase
+        self.localRepositoriesLocationUseCase = localRepositoriesLocationUseCase
+        self.getRepositoryDisplayNameUseCase = getRepositoryDisplayNameUseCase
     }
 
     // MARK: - Execute
 
     func execute(from repository: Repository) {
-        let componentName = self.repositoryDisplayNameUseCase.getName(from: repository.name)
-
         self.execute(
             repositoryPath: repository.url.path,
-            componentName: componentName
+            repositoryName: repository.name
         )
     }
 
-    func execute(
-        from repositoryName: String,
-        componentName: String
-    ) {
-        // TODO: try !
-        let repositoryPath = self.repositoriesLocationUseCase.getURL().path + "/" + repositoryName
+    func execute(from repositoryName: String) {
+        let repositoryPath = self.localRepositoriesLocationUseCase.getURL().path + "/" + repositoryName
 
         self.execute(
             repositoryPath: repositoryPath,
-            componentName: componentName
+            repositoryName: repositoryName
         )
     }
 
     private func execute(
         repositoryPath: String,
-        componentName: String
+        repositoryName: String
     ) {
-        let componentName = componentName.replacingOccurrences(of: " ", with: "")
+        let componentName = self.getRepositoryDisplayNameUseCase.execute(from: repositoryName)
+            .replacingOccurrences(of: " ", with: "")
 
         // Rename all folders
         Console.shared.add("************************", .custom(.blue))
@@ -96,7 +103,7 @@ final class InitComponentUseCase {
         Console.shared.add("************************", .custom(.blue))
         Console.shared.add("RENAME CONTENT FILES ", .custom(.cyan), .bold)
         Console.shared.add("**", .custom(.blue))
-        self.renameContent(
+        self.renameContentFile(
             repositoryPath: repositoryPath,
             componentName: componentName
         )
@@ -104,14 +111,15 @@ final class InitComponentUseCase {
         Console.shared.add("\n\n")
     }
 
-    // MARK: - Rename
+    // MARK: - Rename Files & Folders
 
+    //
     private func renameAll(
         forType type: PathType,
         repositoryPath: String,
         componentName: String
     ) {
-        let ignorePaths = [".git", ".sourcery", ".github", ".gitignore", ".swiftlint.yml", ".DS_Store"]
+        let ignorePaths = Constants.Ignore.paths
         if let enumerator = FileManager.default.enumerator(atPath: repositoryPath) {
             while let filename = enumerator.nextObject() as? String {
 
@@ -155,11 +163,13 @@ final class InitComponentUseCase {
         }
     }
 
-    private func renameContent(
+    // MARK: - Rename Content File
+
+    private func renameContentFile(
         repositoryPath: String,
         componentName: String
     ) {
-        let ignorePaths = [".git", ".sourcery", ".github", ".gitignore", ".swiftlint.yml", ".DS_Store"]
+        let ignorePaths = Constants.Ignore.paths
         let username = NSFullUserName()
         let date = currentDate()
         let year = currentYear()
@@ -183,6 +193,7 @@ final class InitComponentUseCase {
 
                         let replacing: [(of: String, with: String)] = [
                             (Constants.Default.defaultName, componentName),
+                            (Constants.Default.defaultNameLowerCase, componentName.lowercased()),
                             (Constants.Default.defaultUsername, username),
                             (Constants.Default.defaultDate, date),
                             (Constants.Default.defaultYear, year)

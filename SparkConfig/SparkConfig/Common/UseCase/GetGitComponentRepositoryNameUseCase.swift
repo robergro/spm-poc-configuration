@@ -1,5 +1,5 @@
 //
-//  ComponentRepositoryNameUseCase.swift
+//  GetGitComponentRepositoryNameUseCase.swift
 //  SparkConfig
 //
 //  Created by robin.lemaire on 17/05/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ComponentRepositoryNameUseCase {
+final class GetGitComponentRepositoryNameUseCase {
 
     // MARK: - Execute
 
