@@ -25,40 +25,42 @@ final class GetRepositoryDependenciesUseCase {
         self.getFileURLUseCase = getFileURLUseCase
     }
 
-    // MARK: - Getter
+    // MARK: - Execute
 
-    func execute(from repositoryURL: URL) {
+    func execute(from repositoryURL: URL) -> [Dependency] {
         if let fileURL = self.getFileURLUseCase.execute(
             file: Constants.file,
             from: repositoryURL
         ) {
             do {
-                var text = try String(
+                let text = try String(
                     contentsOf: fileURL,
                     encoding: .utf8
                 )
 
-                let dependencies = text.sliceMultipleTimes(from: "dependencies", to: "]")
+                if let dependencies = text.sliceMultipleTimes(from: "dependencies", to: "]").first {
+                    return dependencies.sliceMultipleTimes(from: ".package(", to: ")").compactMap {
+                        let type: DependencyType = $0.contains("// url") ? .local : .external
 
-                // TODO: get local dependencies
-                // TODO: get external dependencies
+                        guard let name = $0.sliceMultipleTimes(from: "path: \"../", to: "\"").first else {
+                            return nil
+                        }
 
+                        let repository = Repository.sharedAll.first(where: {
+                            $0.name.contains(name)
+                        })
 
-
-                dependencies.forEach { dependency in
-
-                    let localDependencies = dependency.sliceMultipleTimes(from: "path: \"..", to: "\"")
-                    localDependencies.forEach { localDependency in
-                        print("localDependency \(localDependency)")
+                        return .init(
+                            type: type,
+                            name: name,
+                            content: $0,
+                            packageURL: fileURL,
+                            repository: repository
+                        )
                     }
-
-                    let externalDependencies = dependency.sliceMultipleTimes(from: "robergro/", to: ".git")
-                    externalDependencies.forEach { externalDependency in
-                        print("externalDependency \(externalDependency)")
-                    }
+                } else {
+                    Console.shared.add("No dependencies founded", .info)
                 }
-
-
             } catch {
                 Console.shared.add(error.localizedDescription, .error)
             }
@@ -66,5 +68,7 @@ final class GetRepositoryDependenciesUseCase {
         } else {
             Console.shared.add("No \(Constants.file) found !", .error)
         }
+
+        return []
     }
 }

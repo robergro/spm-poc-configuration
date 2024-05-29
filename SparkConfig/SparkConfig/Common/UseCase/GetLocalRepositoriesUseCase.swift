@@ -16,8 +16,8 @@ final class GetLocalRepositoriesUseCase {
 
     // MARK: - Getter
 
-    func execute() -> [Repository] {
-        let files = self.getFoldersInLocalRepositoriesUseCase.execute()
+    func execute() async -> [Repository] {
+        let files = await self.getFoldersInLocalRepositoriesUseCase.execute()
 
         return files.compactMap {
             self.getLocalRepositoryUseCase.execute(from: $0)

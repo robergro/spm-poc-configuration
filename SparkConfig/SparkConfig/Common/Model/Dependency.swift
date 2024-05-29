@@ -7,15 +7,18 @@
 
 import Foundation
 
-//struct Dependency: Hashable {
-//
-//    // MARK: - Properties
-//
-//    let type: DependencyType
-//    let name: String
-//    let url: URL
-//
-//    var systemImage: String {
-//        self.type.systemImage
-//    }
-//}
+struct Dependency: Hashable, Identifiable {
+
+    // MARK: - Properties
+
+    let id = UUID()
+    let type: DependencyType
+    let name: String
+    let content: String
+    let packageURL: URL
+    let repository: Repository?
+
+    var systemImage: String {
+        self.type.systemImage
+    }
+}

@@ -14,12 +14,12 @@ final class GetXcodeRepositoryURLUseCase {
     func execute(from repositoryURL: URL) -> URL? {
         let packagePath = repositoryURL.path + "/Package.swift"
         
-        if FileManager.default.fileExists(atPath: packagePath) {
+        if SparkFileManager.shared.fileExists(atPath: packagePath) {
             return URL(filePath: packagePath)
 
         } else {
             do {
-                let files = try FileManager.default.contentsOfDirectory(
+                let files = try SparkFileManager.shared.contentsOfDirectory(
                     at: repositoryURL,
                     includingPropertiesForKeys: nil
                 )

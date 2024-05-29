@@ -13,7 +13,7 @@ final class GetLocalRepositoryUseCase {
 
     func execute(from url: URL) -> Repository? {
         do {
-            let files = try FileManager.default.contentsOfDirectory(
+            let files = try SparkFileManager.shared.contentsOfDirectory(
                 at: url, 
                 includingPropertiesForKeys: [.isDirectoryKey]
             )

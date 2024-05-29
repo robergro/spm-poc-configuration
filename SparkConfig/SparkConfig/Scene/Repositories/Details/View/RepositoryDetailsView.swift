@@ -13,6 +13,11 @@ struct RepositoryDetailsView: View {
 
     var viewModel: RepositoryDetailsViewModel
 
+    let columns = [
+        GridItem(.adaptive(minimum: 250, maximum: 300), alignment: .topLeading),
+        GridItem(.fixed(10), alignment: .topLeading)
+    ]
+
     // MARK: - Initialization
 
     init(repository: Repository) {
@@ -138,22 +143,66 @@ struct RepositoryDetailsView: View {
             alignment: .leading,
             spacing: 16
         ) {
-            Text("Dependencies")
-                .font(.title2)
-                .bold()
+            HStack {
+                Text("Dependencies")
+                    .font(.title2)
+                    .bold()
 
-            // TODO:
-//            // Executions Buttons
-//            HStack {
-//                ForEach(
-//                    self.viewModel.executionTypes,
-//                    id: \.rawValue
-//                ) { type in
-//                    Button(type.name) {
-//                        self.viewModel.execute(from: type)
-//                    }
-//                }
-//            }
+                Button {
+                    self.viewModel.reloadDependencies()
+                } label: {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(.plain)
+                .help(Text("Reload dependencies"))
+
+                Spacer()
+            }
+
+            HStack {
+                Text("Select dependencies to switch to local or external source:")
+                Spacer()
+                Button(self.viewModel.dependenciesNextSelectionStatus.title) { 
+                    self.viewModel.selectAllDependencies()
+                }
+            }
+
+            ScrollView {
+                LazyVGrid(columns: self.columns, alignment: .leading, spacing: 20) {
+                    ForEach(self.viewModel.dependencies, id: \.self) { dependency in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Image(systemName: dependency.systemImage)
+
+                                Group {
+                                    Text(dependency.name) +
+                                    Text(" (\(dependency.type.rawValue))")
+                                        .italic()
+                                }
+                            }
+                        }
+                        .padding(8)
+                        .background(self.viewModel.dependencyIsSelected(dependency) ? Color.gray.opacity(0.5) : Color.clear)
+                        .cornerRadius(8.0)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            self.viewModel.setDependencyIsSelected(dependency)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+
+            HStack {
+                Button("Switch selection to local dependencies") {
+                    self.viewModel.switchSelectionsToLocalDependencies()
+                }
+
+                Button("Switch selection to external dependencies") {
+                    self.viewModel.switchSelectionsToExternalDependencies()
+                }
+            }
         }
         .padding(.vertical, 12)
     }

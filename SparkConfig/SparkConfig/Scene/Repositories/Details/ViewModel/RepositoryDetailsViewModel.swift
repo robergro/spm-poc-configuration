@@ -15,10 +15,15 @@ import SwiftUI
     @ObservationIgnored private let xcodeURL: URL?
     @ObservationIgnored private let runSourceryUseCase: RunSourceryUseCase
     @ObservationIgnored private let initComponentUseCase: InitComponentUseCase
+    @ObservationIgnored private let getRepositoryDependenciesUseCase: GetRepositoryDependenciesUseCase
+    @ObservationIgnored private let switchRepositoryDependencyLocationUseCase: SwitchRepositoryDependencyLocationUseCase
 
     // MARK: - Published Properties
 
     let repository: Repository
+    var dependencies: [Dependency]
+    var selectedDependencies: [Dependency] = .init()
+    var dependenciesNextSelectionStatus: RepositoryDependenciesNextSelectionStatus = .selectedAll
     let displayName: String
     let showGithubSection: Bool
     let localRedirectionTypes: [RepositoryLocalRedirectionType]
@@ -33,16 +38,17 @@ import SwiftUI
         runSourceryUseCase: RunSourceryUseCase = .init(),
         initComponentUseCase: InitComponentUseCase = .init(),
         getGitRepositoryURLUseCase: GetGitRepositoryURLUseCase = .init(),
-        getRepositoryDependenciesUseCase: GetRepositoryDependenciesUseCase = .init()
+        getRepositoryDependenciesUseCase: GetRepositoryDependenciesUseCase = .init(),
+        switchRepositoryDependencyLocationUseCase: SwitchRepositoryDependencyLocationUseCase = .init()
     ) {
-        print("------")
-        print("LOGROB Repo \(repository.name)")
         self.repository = repository
 
         self.runSourceryUseCase = runSourceryUseCase
         self.initComponentUseCase = initComponentUseCase
+        self.getRepositoryDependenciesUseCase = getRepositoryDependenciesUseCase
+        self.switchRepositoryDependencyLocationUseCase = switchRepositoryDependencyLocationUseCase
 
-        getRepositoryDependenciesUseCase.execute(from: repository.url)
+        self.dependencies = getRepositoryDependenciesUseCase.execute(from: repository.url)
 
         self.displayName = displayNameUseCase.execute(from: repository.name)
         self.githubURL = getGitRepositoryURLUseCase.execute(from: repository.url)
@@ -59,8 +65,6 @@ import SwiftUI
             return
         }
 
-        print("LOGROB github URL -\(githubURL.path)-")
-
         switch type {
         case .github:
             NSWorkspace.shared.open(githubURL)
@@ -75,8 +79,6 @@ import SwiftUI
             guard let xcodeURL = self.xcodeURL else { return }
             NSWorkspace.shared.open(xcodeURL)
         case .finder:
-            NSWorkspace.shared.open(self.repository.url)
-        case .github:
             NSWorkspace.shared.open(self.repository.url)
         }
     }
@@ -94,5 +96,76 @@ import SwiftUI
                 from: self.repository
             )
         }
+    }
+
+    // MARK: - Dependencies
+
+    func reloadDependencies() {
+        self.dependencies = self.getRepositoryDependenciesUseCase.execute(from: self.repository.url)
+        self.dependenciesNextSelectionStatus = .selectedAll
+        self.selectedDependencies.removeAll()
+    }
+
+    func selectAllDependencies() {
+        switch self.dependenciesNextSelectionStatus {
+        case .selectedAll: 
+            self.dependenciesNextSelectionStatus = .unselectedAll
+            self.selectedDependencies = self.dependencies
+        case .unselectedAll:
+            self.dependenciesNextSelectionStatus = .selectedAll
+            self.selectedDependencies = []
+        }
+    }
+
+    func setDependencyIsSelected(_ dependency: Dependency) {
+        if self.dependencyIsSelected(dependency) {
+            self.selectedDependencies.removeAll(where: {
+                $0 == dependency
+            })
+        } else {
+            self.selectedDependencies.append(dependency)
+        }
+        
+        self.dependenciesNextSelectionStatus = self.dependencies == self.selectedDependencies ? .unselectedAll : .selectedAll
+    }
+
+    func dependencyIsSelected(_ dependency: Dependency) -> Bool {
+        self.selectedDependencies.contains(dependency)
+    }
+
+    func switchSelectionsToExternalDependencies() {
+        self.switchDependenciesLocation(to: .external)
+    }
+
+    func switchSelectionsToLocalDependencies() {
+        self.switchDependenciesLocation(to: .local)
+    }
+
+    func switchDependenciesLocation(to type: DependencyType) {
+        let dependencies = self.selectedDependencies.filter {
+            if $0.type != type {
+                return true
+            } else {
+                Console.shared.add("The source of the \($0.name) dependency is already on \(type.rawValue) !", .info)
+                return false
+            }
+        }
+
+        var succeed: Bool = false
+        dependencies.forEach { dependency in
+            let succeedTemp = self.switchRepositoryDependencyLocationUseCase.execute(from: dependency)
+            if !succeed {
+                succeed = succeedTemp
+            }
+        }
+
+        // Reload only if at least one dependency changed
+        if succeed {
+            self.reloadDependencies()
+        }
+
+        // Clear selected array
+        self.selectedDependencies.removeAll()
+        self.dependenciesNextSelectionStatus = .selectedAll
     }
 }

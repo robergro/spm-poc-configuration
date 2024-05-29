@@ -17,7 +17,7 @@ final class GetFileURLUseCase {
     ) -> URL? {
         let repositoryPath = repositoryURL.path
 
-        if let enumerator = FileManager.default.enumerator(atPath: repositoryPath) {
+        if let enumerator = SparkFileManager.shared.enumerator(atPath: repositoryPath) {
             while let filename = enumerator.nextObject() as? String {
                 
                 if filename.components(separatedBy: "/").last?.contains(file) ?? false {

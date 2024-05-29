@@ -7,10 +7,15 @@
 
 import Foundation
 
-struct Repository: Hashable {
-    
+struct Repository: Hashable, Identifiable {
+
+    // MARK: - Static Properties
+
+    static var sharedAll: [Self] = []
+
     // MARK: - Properties
 
+    let id = UUID()
     let type: RepositoryType
     let name: String
     let url: URL

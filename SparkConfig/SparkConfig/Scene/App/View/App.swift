@@ -25,7 +25,7 @@ struct SparkConfigApp: App {
     var body: some Scene {
         WindowGroup {
             VSplitView {
-                NavigationView {
+                NavigationStack {
                     VStack(alignment: .leading) {
                         SideBarView()
                     }

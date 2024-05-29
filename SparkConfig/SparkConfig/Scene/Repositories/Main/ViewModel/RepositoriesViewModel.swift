@@ -25,22 +25,35 @@ import SwiftUI
 
     // MARK: - Published Properties
 
-    private var repositories: [Repository]
+    private var repositories: [Repository] = [] {
+        didSet {
+            Repository.sharedAll = self.repositories
+        }
+    }
     var searchText: String = ""
+    var isLoading: Bool = true
 
     // MARK: - Initialization
 
-    init(
-        getLocalRepositoriesUseCase: GetLocalRepositoriesUseCase = .init()
-    ) {
+    init(getLocalRepositoriesUseCase: GetLocalRepositoriesUseCase = .init()) {
         self.getLocalRepositoriesUseCase = getLocalRepositoriesUseCase
+    }
 
-        self.repositories = getLocalRepositoriesUseCase.execute()
+    // MARK: - Methods
+
+    func fetch() async {
+        try? await Task.sleep(nanoseconds: 4 * 1_000_000_000) // 1 second
+
+        self.repositories = await getLocalRepositoriesUseCase.execute()
+        self.isLoading = false
     }
 
     // MARK: - Setter
 
-    func refresh() {
-        self.repositories = getLocalRepositoriesUseCase.execute()
+    @MainActor
+    func refresh() async {
+        self.isLoading = true
+        self.repositories = await self.getLocalRepositoriesUseCase.execute()
+        self.isLoading = false
     }
 }

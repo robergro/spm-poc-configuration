@@ -7,10 +7,14 @@
 
 import Foundation
 
-enum Entry: String, CaseIterable {
+enum Entry: String, CaseIterable, Identifiable {
     case repositories
 
     // MARK: - Properties
+
+    var id: String {
+        return self.name
+    }
 
     var name: String {
         switch self {

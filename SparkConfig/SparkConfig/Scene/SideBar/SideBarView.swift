@@ -17,16 +17,18 @@ struct SideBarView: View {
     // MARK: - View
     
     var body: some View {
-        List {
-            ForEach(self.entries, id: \.rawValue) { entry in
-                NavigationLink {
-                    switch entry {
-                    case .repositories:
-                        RepositoriesView()
-                    }
-                } label: {
-                    Label(entry.name, systemImage: entry.systemImage)
-                }
+
+        NavigationSplitView {
+            List(self.entries, selection: self.$selectedEntry) { entry in
+                Label(entry.name, systemImage: entry.systemImage)
+                    .tag(entry)
+            }
+        } detail: {
+            switch self.selectedEntry {
+            case .repositories:
+                RepositoriesView()
+            case .none:
+                EmptyView()
             }
         }
     }

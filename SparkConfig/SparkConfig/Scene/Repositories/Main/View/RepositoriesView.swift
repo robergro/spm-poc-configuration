@@ -13,34 +13,57 @@ struct RepositoriesView: View {
 
     @Bindable private var viewModel = RepositoriesViewModel()
 
+    @State private var selectedRepository: Repository?
+
     // MARK: - View
 
     var body: some View {
-        NavigationView {
-            List(self.viewModel.searchResults, id: \.self) { repository in
-                NavigationLink(destination: RepositoryDetailsView(repository: repository)) {
-                    HStack {
-                        Image(systemName: repository.systemImage)
-                            .frame(width: 30)
+        NavigationSplitView {
+            Group {
+                
+                if self.viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(.linear)
+                        .padding(.all)
+                } else {
+                    List(self.viewModel.searchResults, selection: self.$selectedRepository) { repository in
+                        HStack {
+                            Image(systemName: repository.systemImage)
+                                .frame(width: 30)
 
-                        Text(repository.name)
-                            .font(.headline)
+                            Text(repository.name)
+                                .font(.headline)
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                        .tag(repository)
                     }
                 }
             }
             .frame(minWidth: 360)
             .searchable(text: self.$viewModel.searchText)
             .modifier(RepositoriesToolbarViewModifier(refresh: {
-                self.viewModel.refresh()
+                Task {
+                    await self.viewModel.refresh()
+                }
             }))
+            .redacted(reason: self.viewModel.isLoading ? .placeholder : [])
+            .navigationTitle("Repositories")
+        } detail: {
+            if let selectedRepository = self.selectedRepository {
+                RepositoryDetailsView(repository: selectedRepository)
+            } else {
+                EmptyView()
+            }
         }
-        .navigationTitle("Repositories")
-
+        .onAppear {
+            Task {
+                await self.viewModel.fetch()
+            }
+        }
     }
 }
 

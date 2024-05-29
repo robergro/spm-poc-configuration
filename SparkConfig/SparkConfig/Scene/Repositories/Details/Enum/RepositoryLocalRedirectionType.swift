@@ -8,7 +8,6 @@
 enum RepositoryLocalRedirectionType: String, CaseIterable {
     case xcode
     case finder
-    case github
 
     // MARK: - Properties
 
@@ -16,7 +15,6 @@ enum RepositoryLocalRedirectionType: String, CaseIterable {
         switch self {
         case .xcode: "Open package in Xcode"
         case .finder: "Open in Finder"
-        case .github: "Open in github"
         }
     }
 
@@ -24,7 +22,6 @@ enum RepositoryLocalRedirectionType: String, CaseIterable {
         switch self {
         case .xcode: "arrow.up.forward.app"
         case .finder: "folder"
-        default: ""
         }
     }
 }

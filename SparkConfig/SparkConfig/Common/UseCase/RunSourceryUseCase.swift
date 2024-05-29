@@ -43,7 +43,7 @@ final class RunSourceryUseCase {
         Console.shared.add("Run dependencies sourcery ", .custom(.cyan), .bold)
 
         do {
-            let derivedDataFiles = try FileManager.default.contentsOfDirectory(
+            let derivedDataFiles = try SparkFileManager.shared.contentsOfDirectory(
                 at: url,
                 includingPropertiesForKeys: [.isDirectoryKey]
             )
@@ -55,11 +55,11 @@ final class RunSourceryUseCase {
 
                     let dependenciesPath = derivedDataFile.path + "/SourcePackages/checkouts/"
                     do {
-                        let packageFiles = try FileManager.default.contentsOfDirectory(atPath: dependenciesPath)
+                        let packageFiles = try SparkFileManager.shared.contentsOfDirectory(atPath: dependenciesPath)
                         packageFiles.forEach { packageFile in
                             var isDirectory : ObjCBool = true
                             
-                            _ = FileManager.default.fileExists(
+                            _ = SparkFileManager.shared.fileExists(
                                 atPath: packageFile,
                                 isDirectory: &isDirectory
                             )
@@ -68,7 +68,7 @@ final class RunSourceryUseCase {
                                 let finalPath = dependenciesPath + packageFile
 
                                 // Check if folder contains sourcery
-                                if FileManager.default.fileExists(
+                                if SparkFileManager.shared.fileExists(
                                     atPath: finalPath + "/.sourcery.yml"
                                 ) {
                                     Console.shared.add("Run sourcery at \(finalPath)", .info)

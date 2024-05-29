@@ -21,6 +21,10 @@
 		386AC1742C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1732C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift */; };
 		386AC1762C00EEBE000A7FB6 /* Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1752C00EEBE000A7FB6 /* Dependency.swift */; };
 		386AC1792C00F046000A7FB6 /* String+SlideExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1782C00F046000A7FB6 /* String+SlideExtension.swift */; };
+		386AC17C2C04BC2C000A7FB6 /* DependencyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC17B2C04BC2C000A7FB6 /* DependencyType.swift */; };
+		386AC1842C04E5FA000A7FB6 /* SwitchRepositoryDependencyLocationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1832C04E5FA000A7FB6 /* SwitchRepositoryDependencyLocationUseCase.swift */; };
+		386AC1872C05E02F000A7FB6 /* RepositoryDependenciesSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1862C05E02F000A7FB6 /* RepositoryDependenciesSelection.swift */; };
+		386AC1912C0738AC000A7FB6 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386AC1902C0738AC000A7FB6 /* FileManager.swift */; };
 		38B349102BF5008D00771AD0 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B3490F2BF5008D00771AD0 /* App.swift */; };
 		38B349142BF5008E00771AD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38B349132BF5008E00771AD0 /* Assets.xcassets */; };
 		38B349172BF5008E00771AD0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 38B349162BF5008E00771AD0 /* Preview Assets.xcassets */; };
@@ -71,6 +75,10 @@
 		386AC1732C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetRepositoryDependenciesUseCase.swift; sourceTree = "<group>"; };
 		386AC1752C00EEBE000A7FB6 /* Dependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependency.swift; sourceTree = "<group>"; };
 		386AC1782C00F046000A7FB6 /* String+SlideExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+SlideExtension.swift"; sourceTree = "<group>"; };
+		386AC17B2C04BC2C000A7FB6 /* DependencyType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyType.swift; sourceTree = "<group>"; };
+		386AC1832C04E5FA000A7FB6 /* SwitchRepositoryDependencyLocationUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchRepositoryDependencyLocationUseCase.swift; sourceTree = "<group>"; };
+		386AC1862C05E02F000A7FB6 /* RepositoryDependenciesSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryDependenciesSelection.swift; sourceTree = "<group>"; };
+		386AC1902C0738AC000A7FB6 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		38B3490C2BF5008D00771AD0 /* SparkConfig.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SparkConfig.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		38B3490F2BF5008D00771AD0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		38B349132BF5008E00771AD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -167,21 +175,31 @@
 				3831CAC12BF7974300B8F38F /* CreateComponentUseCase.swift */,
 				38B349382BF517CB00771AD0 /* DerivedDataLocationUseCase.swift */,
 				38B349342BF517A000771AD0 /* DirectoryLocationUseCase.swift */,
-				3831CAC32BF7974300B8F38F /* GetGitComponentRepositoryNameUseCase.swift */,
+				386AC1712C00E3CA000A7FB6 /* GetFileURLUseCase.swift */,
 				38B349582BF5EC2000771AD0 /* GetFoldersInLocalRepositoriesUseCase.swift */,
+				3831CAC32BF7974300B8F38F /* GetGitComponentRepositoryNameUseCase.swift */,
 				3831CAD62BFC9E4800B8F38F /* GetGitRepositoryURLUseCase.swift */,
 				38B3495A2BF5ECDE00771AD0 /* GetLocalRepositoriesUseCase.swift */,
-				38B349642BF649B900771AD0 /* GetRepositoryDisplayNameUseCase.swift */,
 				38B349502BF5E74E00771AD0 /* GetLocalRepositoryUseCase.swift */,
+				386AC1732C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift */,
+				38B349642BF649B900771AD0 /* GetRepositoryDisplayNameUseCase.swift */,
 				38B349692BF6527800771AD0 /* GetXcodeRepositoryURLUseCase.swift */,
 				38B349922BF785B100771AD0 /* GitTokenUseCase.swift */,
 				3831CAC72BF7986F00B8F38F /* InitComponentUseCase.swift */,
 				38B3493A2BF517E300771AD0 /* LocalRepositoriesLocationUseCase.swift */,
 				38B3496F2BF661A900771AD0 /* RunSourceryUseCase.swift */,
-				386AC1712C00E3CA000A7FB6 /* GetFileURLUseCase.swift */,
-				386AC1732C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift */,
+				386AC1832C04E5FA000A7FB6 /* SwitchRepositoryDependencyLocationUseCase.swift */,
 			);
 			path = UseCase;
+			sourceTree = "<group>";
+		};
+		386AC17A2C04BC0A000A7FB6 /* Enum */ = {
+			isa = PBXGroup;
+			children = (
+				38B349562BF5E7AF00771AD0 /* RepositoryType.swift */,
+				386AC17B2C04BC2C000A7FB6 /* DependencyType.swift */,
+			);
+			path = Enum;
 			sourceTree = "<group>";
 		};
 		38B349032BF5008D00771AD0 = {
@@ -288,6 +306,7 @@
 		38B3493C2BF5587400771AD0 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				386AC17A2C04BC0A000A7FB6 /* Enum */,
 				38B349492BF5E49C00771AD0 /* Extension */,
 				38B349712BF6623400771AD0 /* Helpers */,
 				38B349522BF5E78300771AD0 /* Model */,
@@ -370,7 +389,6 @@
 		38B349552BF5E79E00771AD0 /* Enum */ = {
 			isa = PBXGroup;
 			children = (
-				38B349562BF5E7AF00771AD0 /* RepositoryType.swift */,
 				38B3497B2BF73C9200771AD0 /* RepositoriesToolbarType.swift */,
 			);
 			path = Enum;
@@ -408,6 +426,7 @@
 				38B349672BF64F5E00771AD0 /* RepositoryLocalRedirectionType.swift */,
 				3831CAD82BFCA42E00B8F38F /* RepositoryExternalRedirectionType.swift */,
 				38B3496D2BF6607B00771AD0 /* RepositoryExecutionType.swift */,
+				386AC1862C05E02F000A7FB6 /* RepositoryDependenciesSelection.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -417,6 +436,7 @@
 			children = (
 				38B349722BF6624A00771AD0 /* RunCommand.swift */,
 				3831CAD02BF7A95100B8F38F /* Console.swift */,
+				386AC1902C0738AC000A7FB6 /* FileManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -538,16 +558,20 @@
 				38B3496E2BF6607B00771AD0 /* RepositoryExecutionType.swift in Sources */,
 				38B349392BF517CB00771AD0 /* DerivedDataLocationUseCase.swift in Sources */,
 				38B349482BF562E300771AD0 /* RepositoriesSettingsLocationType.swift in Sources */,
+				386AC17C2C04BC2C000A7FB6 /* DependencyType.swift in Sources */,
 				386AC1722C00E3CA000A7FB6 /* GetFileURLUseCase.swift in Sources */,
 				386AC1742C00E78C000A7FB6 /* GetRepositoryDependenciesUseCase.swift in Sources */,
 				38B3493B2BF517E300771AD0 /* LocalRepositoriesLocationUseCase.swift in Sources */,
 				38B349452BF55E5B00771AD0 /* RepositoriesSettingsViewModel.swift in Sources */,
+				386AC1842C04E5FA000A7FB6 /* SwitchRepositoryDependencyLocationUseCase.swift in Sources */,
 				38B349572BF5E7AF00771AD0 /* RepositoryType.swift in Sources */,
 				38B3493F2BF558A400771AD0 /* DAOWrapper.swift in Sources */,
 				38B349512BF5E74E00771AD0 /* GetLocalRepositoryUseCase.swift in Sources */,
 				38B3496A2BF6527800771AD0 /* GetXcodeRepositoryURLUseCase.swift in Sources */,
 				3831CAC82BF7986F00B8F38F /* InitComponentUseCase.swift in Sources */,
+				386AC1872C05E02F000A7FB6 /* RepositoryDependenciesSelection.swift in Sources */,
 				38B349882BF7433A00771AD0 /* AddComponentViewModel.swift in Sources */,
+				386AC1912C0738AC000A7FB6 /* FileManager.swift in Sources */,
 				38B349592BF5EC2000771AD0 /* GetFoldersInLocalRepositoriesUseCase.swift in Sources */,
 				38B349102BF5008D00771AD0 /* App.swift in Sources */,
 				38B3495B2BF5ECDE00771AD0 /* GetLocalRepositoriesUseCase.swift in Sources */,

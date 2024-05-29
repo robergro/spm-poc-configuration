@@ -15,11 +15,11 @@ final class GetFoldersInLocalRepositoriesUseCase {
 
     // MARK: - Getter
 
-    func execute() -> [URL] {
+    func execute() async -> [URL] {
         let url = self.localRepositoriesLocationUseCase.getURL()
-
+        
         do {
-            return try FileManager.default.contentsOfDirectory(
+            return try SparkFileManager.shared.contentsOfDirectory(
                 at: url,
                 includingPropertiesForKeys: [.isDirectoryKey]
             )

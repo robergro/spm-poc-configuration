@@ -15,7 +15,6 @@ final class InitComponentUseCase {
 
     enum Constants {
         enum Default {
-            // TODO: adding ___ before and after the word
             static let defaultName = "___COMPONENT_NAME___"
             static let defaultNameLowerCase = "___component_name___"
             static let defaultUsername = "___USERNAME___"
@@ -120,7 +119,7 @@ final class InitComponentUseCase {
         componentName: String
     ) {
         let ignorePaths = Constants.Ignore.paths
-        if let enumerator = FileManager.default.enumerator(atPath: repositoryPath) {
+        if let enumerator = SparkFileManager.shared.enumerator(atPath: repositoryPath) {
             while let filename = enumerator.nextObject() as? String {
 
                 if ignorePaths.contains(filename) {
@@ -151,7 +150,7 @@ final class InitComponentUseCase {
                 with: componentName
             )
             do {
-                try FileManager.default.moveItem(
+                try SparkFileManager.shared.moveItem(
                     atPath: path,
                     toPath: newPath
                 )
@@ -174,7 +173,7 @@ final class InitComponentUseCase {
         let date = currentDate()
         let year = currentYear()
 
-        if let enumerator = FileManager.default.enumerator(atPath: repositoryPath) {
+        if let enumerator = SparkFileManager.shared.enumerator(atPath: repositoryPath) {
             while let filename = enumerator.nextObject() as? String {
 
                 if ignorePaths.contains(filename) {
