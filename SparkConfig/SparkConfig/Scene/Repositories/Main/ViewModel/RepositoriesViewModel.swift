@@ -42,13 +42,9 @@ import SwiftUI
     // MARK: - Methods
 
     func fetch() async {
-        try? await Task.sleep(nanoseconds: 4 * 1_000_000_000) // 1 second
-
         self.repositories = await getLocalRepositoriesUseCase.execute()
         self.isLoading = false
     }
-
-    // MARK: - Setter
 
     @MainActor
     func refresh() async {

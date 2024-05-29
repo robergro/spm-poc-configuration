@@ -21,7 +21,7 @@ final class CloneComponentUseCase {
 
     // MARK: - Execute
 
-    func execute(from component: String) {
+    func execute(from component: String) async {
         // Clone the repository
         let repositoriesURL = self.localRepositoriesLocationUseCase.getURL()
 

@@ -21,7 +21,7 @@ final class RunSourceryUseCase {
 
     // MARK: - Execute
 
-    func execute(from repository: Repository) {
+    func execute(from repository: Repository) async {
         let path = repository.url.path
 
         // **

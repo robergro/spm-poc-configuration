@@ -7,8 +7,6 @@
 
 import Foundation
 
-// TODO: add kind of async management here
-
 enum RunCommandError: Error {
     case unknow
 }

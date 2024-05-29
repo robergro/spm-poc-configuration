@@ -51,14 +51,14 @@ final class InitComponentUseCase {
 
     // MARK: - Execute
 
-    func execute(from repository: Repository) {
+    func execute(from repository: Repository) async {
         self.execute(
             repositoryPath: repository.url.path,
             repositoryName: repository.name
         )
     }
 
-    func execute(from repositoryName: String) {
+    func execute(from repositoryName: String) async {
         let repositoryPath = self.localRepositoriesLocationUseCase.getURL().path + "/" + repositoryName
 
         self.execute(

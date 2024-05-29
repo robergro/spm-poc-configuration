@@ -27,8 +27,8 @@ final class GetRepositoryDependenciesUseCase {
 
     // MARK: - Execute
 
-    func execute(from repositoryURL: URL) -> [Dependency] {
-        if let fileURL = self.getFileURLUseCase.execute(
+    func execute(from repositoryURL: URL) async -> [Dependency] {
+        if let fileURL = await self.getFileURLUseCase.execute(
             file: Constants.file,
             from: repositoryURL
         ) {

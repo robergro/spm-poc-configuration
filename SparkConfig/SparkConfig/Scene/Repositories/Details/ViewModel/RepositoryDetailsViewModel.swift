@@ -11,23 +11,27 @@ import SwiftUI
 
     // MARK: - Properties
 
-    @ObservationIgnored private let githubURL: URL?
-    @ObservationIgnored private let xcodeURL: URL?
+    @ObservationIgnored private let getXcodeRepositoryURLUseCase: GetXcodeRepositoryURLUseCase
     @ObservationIgnored private let runSourceryUseCase: RunSourceryUseCase
     @ObservationIgnored private let initComponentUseCase: InitComponentUseCase
+    @ObservationIgnored private let getGitRepositoryURLUseCase: GetGitRepositoryURLUseCase
     @ObservationIgnored private let getRepositoryDependenciesUseCase: GetRepositoryDependenciesUseCase
     @ObservationIgnored private let switchRepositoryDependencyLocationUseCase: SwitchRepositoryDependencyLocationUseCase
 
     // MARK: - Published Properties
 
     let repository: Repository
-    var dependencies: [Dependency]
+    var dependencies: [Dependency] = []
+    var githubURL: URL?
+    var showGithubSection: Bool = true
+    var xcodeURL: URL?
     var selectedDependencies: [Dependency] = .init()
     var dependenciesNextSelectionStatus: RepositoryDependenciesNextSelectionStatus = .selectedAll
     let displayName: String
-    let showGithubSection: Bool
-    let localRedirectionTypes: [RepositoryLocalRedirectionType]
+    var localRedirectionTypes: [RepositoryLocalRedirectionType] = RepositoryLocalRedirectionType.allCases
     let executionTypes: [RepositoryExecutionType]
+    var isLoading: Bool = true
+    var dependenciesIsLoading: Bool = true
 
     // MARK: - Initialization
     
@@ -43,19 +47,29 @@ import SwiftUI
     ) {
         self.repository = repository
 
+        self.getXcodeRepositoryURLUseCase = getXcodeRepositoryURLUseCase
         self.runSourceryUseCase = runSourceryUseCase
         self.initComponentUseCase = initComponentUseCase
+        self.getGitRepositoryURLUseCase = getGitRepositoryURLUseCase
         self.getRepositoryDependenciesUseCase = getRepositoryDependenciesUseCase
         self.switchRepositoryDependencyLocationUseCase = switchRepositoryDependencyLocationUseCase
 
-        self.dependencies = getRepositoryDependenciesUseCase.execute(from: repository.url)
-
         self.displayName = displayNameUseCase.execute(from: repository.name)
-        self.githubURL = getGitRepositoryURLUseCase.execute(from: repository.url)
-        self.showGithubSection = self.githubURL != nil
-        self.xcodeURL = getXcodeRepositoryURLUseCase.execute(from: repository.url)
-        self.localRedirectionTypes = self.xcodeURL != nil ? RepositoryLocalRedirectionType.allCases : [.finder]
         self.executionTypes = repository.type == .component ? RepositoryExecutionType.allCases : [.runSourcery]
+    }
+
+    // MARK: - Fetch
+
+    func fetch() async {
+        self.dependencies = await self.getRepositoryDependenciesUseCase.execute(from: self.repository.url)
+        self.xcodeURL = await self.getXcodeRepositoryURLUseCase.execute(from: self.repository.url)
+        self.githubURL = await self.getGitRepositoryURLUseCase.execute(from: self.repository.url)
+
+        self.showGithubSection = self.githubURL != nil
+        self.localRedirectionTypes = self.xcodeURL != nil ? RepositoryLocalRedirectionType.allCases : [.finder]
+
+        self.isLoading = false
+        self.dependenciesIsLoading = false
     }
 
     // MARK: - Redirection
@@ -85,14 +99,14 @@ import SwiftUI
 
     // MARK: - Execution
 
-    func execute(from type: RepositoryExecutionType) {
+    func execute(from type: RepositoryExecutionType) async {
         switch type {
         case .initComponent:
-            self.initComponentUseCase.execute(
+            await self.initComponentUseCase.execute(
                 from: self.repository
             )
         case .runSourcery:
-            self.runSourceryUseCase.execute(
+            await self.runSourceryUseCase.execute(
                 from: self.repository
             )
         }
@@ -100,10 +114,15 @@ import SwiftUI
 
     // MARK: - Dependencies
 
-    func reloadDependencies() {
-        self.dependencies = self.getRepositoryDependenciesUseCase.execute(from: self.repository.url)
+    @MainActor
+    func reloadDependencies() async {
+        self.dependenciesIsLoading = true
+
+        self.dependencies = await self.getRepositoryDependenciesUseCase.execute(from: self.repository.url)
         self.dependenciesNextSelectionStatus = .selectedAll
         self.selectedDependencies.removeAll()
+
+        self.dependenciesIsLoading = false
     }
 
     func selectAllDependencies() {
@@ -133,15 +152,17 @@ import SwiftUI
         self.selectedDependencies.contains(dependency)
     }
 
-    func switchSelectionsToExternalDependencies() {
-        self.switchDependenciesLocation(to: .external)
+    @MainActor
+    func switchSelectionsToExternalDependencies() async {
+        await self.switchDependenciesLocation(to: .external)
     }
 
-    func switchSelectionsToLocalDependencies() {
-        self.switchDependenciesLocation(to: .local)
+    @MainActor
+    func switchSelectionsToLocalDependencies() async {
+        await self.switchDependenciesLocation(to: .local)
     }
 
-    func switchDependenciesLocation(to type: DependencyType) {
+    private func switchDependenciesLocation(to type: DependencyType) async {
         let dependencies = self.selectedDependencies.filter {
             if $0.type != type {
                 return true
@@ -161,7 +182,7 @@ import SwiftUI
 
         // Reload only if at least one dependency changed
         if succeed {
-            self.reloadDependencies()
+            await self.reloadDependencies()
         }
 
         // Clear selected array

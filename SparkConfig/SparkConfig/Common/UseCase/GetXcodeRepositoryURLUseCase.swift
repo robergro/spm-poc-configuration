@@ -11,7 +11,7 @@ final class GetXcodeRepositoryURLUseCase {
 
     // MARK: - Getter
 
-    func execute(from repositoryURL: URL) -> URL? {
+    func execute(from repositoryURL: URL) async -> URL? {
         let packagePath = repositoryURL.path + "/Package.swift"
         
         if SparkFileManager.shared.fileExists(atPath: packagePath) {

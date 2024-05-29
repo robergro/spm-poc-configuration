@@ -55,6 +55,12 @@ struct RepositoryDetailsView: View {
 
             Spacer()
         }
+        .redacted(reason: self.viewModel.isLoading ? .placeholder : [])
+        .onAppear {
+            Task {
+                await self.viewModel.fetch()
+            }
+        }
     }
 
     // MARK: - ViewBuilder
@@ -129,7 +135,9 @@ struct RepositoryDetailsView: View {
                     id: \.rawValue
                 ) { type in
                     Button(type.name) {
-                        self.viewModel.execute(from: type)
+                        Task {
+                            await self.viewModel.execute(from: type)
+                        }
                     }
                 }
             }
@@ -149,7 +157,9 @@ struct RepositoryDetailsView: View {
                     .bold()
 
                 Button {
-                    self.viewModel.reloadDependencies()
+                    Task {
+                        await self.viewModel.reloadDependencies()
+                    }
                 } label: {
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .frame(width: 16, height: 16)
@@ -163,7 +173,7 @@ struct RepositoryDetailsView: View {
             HStack {
                 Text("Select dependencies to switch to local or external source:")
                 Spacer()
-                Button(self.viewModel.dependenciesNextSelectionStatus.title) { 
+                Button(self.viewModel.dependenciesNextSelectionStatus.title) {
                     self.viewModel.selectAllDependencies()
                 }
             }
@@ -192,15 +202,20 @@ struct RepositoryDetailsView: View {
                     }
                 }
                 .padding(.horizontal)
+                .redacted(reason: self.viewModel.dependenciesIsLoading ? .placeholder : [])
             }
 
             HStack {
                 Button("Switch selection to local dependencies") {
-                    self.viewModel.switchSelectionsToLocalDependencies()
+                    Task {
+                        await self.viewModel.switchSelectionsToLocalDependencies()
+                    }
                 }
 
                 Button("Switch selection to external dependencies") {
-                    self.viewModel.switchSelectionsToExternalDependencies()
+                    Task {
+                        await self.viewModel.switchSelectionsToExternalDependencies()
+                    }
                 }
             }
         }

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// TODO: Add a loader during the creation process
-
 struct AddComponentView: View {
 
     // MARK: - Properties
@@ -82,7 +80,6 @@ struct AddComponentView: View {
                             .bold()
                     }
                     .font(.footnote)
-//                    .italic()
                 }
             }
             .padding(16)
@@ -101,11 +98,17 @@ struct AddComponentView: View {
             }
 
             ToolbarItem(placement: .confirmationAction) {
-                Button("Create") {
-                    self.viewModel.createRepository()
-                    self.showingView.wrappedValue = false
+                if self.viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    Button("Create") {
+                        Task {
+                            await self.viewModel.createRepository()
+                            self.showingView.wrappedValue = false
+                        }
+                    }
+                    .disabled(self.viewModel.componentName.isEmpty)
                 }
-                .disabled(self.viewModel.componentName.isEmpty)
             }
         }
     }

@@ -11,7 +11,7 @@ final class GetGitRepositoryURLUseCase {
 
     // MARK: - Execute
 
-    func execute(from localRepositoryURL: URL) -> URL? {
+    func execute(from localRepositoryURL: URL) async -> URL? {
         let result = RunCommand.shared.shellScript(
             "cd \(localRepositoryURL.path) && git ls-remote --get-url"
         )

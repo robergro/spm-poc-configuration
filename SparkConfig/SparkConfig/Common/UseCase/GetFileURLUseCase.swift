@@ -14,7 +14,7 @@ final class GetFileURLUseCase {
     func execute(
         file: String,
         from repositoryURL: URL
-    ) -> URL? {
+    ) async -> URL? {
         let repositoryPath = repositoryURL.path
 
         if let enumerator = SparkFileManager.shared.enumerator(atPath: repositoryPath) {

@@ -20,6 +20,7 @@ import SwiftUI
 
     // MARK: - Published Properties
 
+    var isLoading: Bool = false
     var componentName: String = ""
     var repositoryName: String {
         self.getGitComponentRepositoryNameUseCase.execute(from: self.componentName)
@@ -43,17 +44,22 @@ import SwiftUI
 
     // MARK: - Action
 
-    func createRepository() {
+    @MainActor
+    func createRepository() async {
         guard !self.componentName.isEmpty else {
             return
         }
 
+        self.isLoading = true
+
         let repositoryName = self.repositoryName
-        self.createComponentUseCase.execute(from: repositoryName)
-        sleep(5) // Need to wait before clone the project
-        self.cloneComponentUseCase.execute(from: repositoryName)
-        self.initComponentUseCase.execute(
+        await self.createComponentUseCase.execute(from: repositoryName)
+        sleep(3) // Need to wait before clone the project
+        await self.cloneComponentUseCase.execute(from: repositoryName)
+        await self.initComponentUseCase.execute(
             from: repositoryName
         )
+
+        self.isLoading = false
     }
 }

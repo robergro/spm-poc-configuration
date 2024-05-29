@@ -11,7 +11,7 @@ final class CreateComponentUseCase {
 
     // MARK: - Execute
 
-    func execute(from component: String) {
+    func execute(from component: String) async {
          let result = RunCommand.shared.shellScript(
             // TODO: uncomment ASAP
             // "gh repo create \(component) --public --template adevinta/spark-ios-template"
